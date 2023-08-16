@@ -1,0 +1,284 @@
+{% extends 'home/utils/base.html' %}
+
+{% block title %}
+<ui-title-bar title="Update Inventory">
+
+</ui-title-bar>
+{% endblock title %}
+
+{% block extra_script %}
+<script>
+
+    let inventoryId;
+    let inventoryCard = document.getElementById('inventoryCard');
+    let initialProductSelectionButton = document.getElementById('initialProductSelectionButton');
+    let productTitle = document.getElementById('productTitle');
+    let productImage = document.getElementById('productImage');
+    let productDescription = document.getElementById('productDescription');
+    let productQuantity = document.getElementById('productQuantity');
+    let productCost = document.getElementById('productCost');
+
+
+    async function openRP(params) {
+        const selected = await shopify.resourcePicker({ type: 'product' });
+        if (selected) {
+            initialProductSelectionButton.style.display = 'none';
+        }
+        console.log("Selected ...", selected)
+        inventoryId = parseInt(selected[0].variants[0].inventoryItem.id.replace("gid://shopify/InventoryItem/", ""))
+        console.log("Inventory ID --->", inventoryId)
+        inventoryCard.style.display = ""
+        productTitle.innerText = selected[0].title;
+        productDescription.innerText = selected[0].descriptionHtml;
+        productQuantity.value = selected[0].variants[0].inventoryQuantity;
+        productCost.value = selected[0].variants[0].price;
+        productImage.src = selected[0].images[0].originalSrc
+        updateInventory()
+    }
+
+
+
+
+    function updateInventory() {
+        console.log("updating...");
+
+        var formData = new FormData()
+
+
+
+        formData.append('inventory_id', inventoryId)
+        formData.append('productCost', productCost.value)
+        formData.append('productQuantity', productQuantity.value)
+
+
+
+
+        try {
+            shopify.loading(true);
+            console.log('"Making request..."')
+            shopifyAuthenticatedFetch("/api/updateInventory/", {
+                method: "post",
+                body: formData
+            }).then(async (res) => {
+                let receivedData = await res.json()
+                console.log("MSG: ", receivedData.msg);
+                console.log("Status: ", receivedData.status);
+                // if (receivedData.status) {
+                //     productName.value = "";
+                //     productQuantity.value = "";
+                //     productPrice.value = "";
+                //     productImage.value = "";
+                //     productDescription.value = "";
+                // }
+
+            });
+        } catch (error) {
+            console.log("Error : ", error);
+        }
+        shopify.loading(false);
+    }
+</script>
+{% endblock extra_script %}
+
+
+{% block main_content %}
+
+<div style="margin: 10%; padding: 10px;">
+
+    <div style="display: flex; align-items: center; justify-content: center;" id="initialProductSelectionButton">
+
+
+        <button class="Polaris-Button Polaris-Button--outline" onclick="openRP()" type="button">
+            <span class="Polaris-Button__Content">
+                <span class="Polaris-Button__Text">Select Product</span>
+            </span>
+        </button>
+
+    </div>
+
+    <div class="Polaris-LegacyCard" id="inventoryCard" style="display: none;">
+        <div class="Polaris-MediaCard">
+            <div class="Polaris-MediaCard__MediaContainer">
+                <img alt="" id="productImage" width="100%" height="100%" style="object-fit:cover;object-position:center"
+                    src="https://burst.shopifycdn.com/photos/business-woman-smiling-in-office.jpg?width=1850">
+            </div>
+            <div class="Polaris-MediaCard__InfoContainer">
+                <div class="Polaris-LegacyCard__Section">
+                    <div class="Polaris-Box"
+                        style="position:absolute;--pc-box-inset-block-start:var(--p-space-4);--pc-box-inset-inline-end:var(--p-space-5);z-index:var(--p-z-index-2)">
+
+                    </div>
+                    <div class="Polaris-LegacyStack Polaris-LegacyStack--vertical Polaris-LegacyStack--spacingTight">
+                        <div class="Polaris-LegacyStack__Item">
+                            <div class="Polaris-MediaCard__Heading">
+                                <h2 id="productTitle" class="Polaris-Text--root Polaris-Text--headingMd">Getting Started
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="Polaris-LegacyStack__Item">
+                            <p id="productDescription" class="Polaris-MediaCard__Description">Discover how Shopify can
+                                power up your entrepreneurial journey.</p>
+                        </div>
+                        <div class="Polaris-LegacyStack__Item">
+                            <div class="Polaris-MediaCard__ActionContainer">
+                                <div class="Polaris-ButtonGroup">
+                                    <div class="Polaris-ButtonGroup__Item">
+                                        <div class="Polaris-MediaCard__PrimaryAction">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id=":R1n6:Label" for=":R1n6:"
+                                                            class="Polaris-Label__Text">Quantity</label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div
+                                                        class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input id="productQuantity" autocomplete="off"
+                                                                class="Polaris-TextField__Input" type="number"
+                                                                aria-labelledby=":R1n6:Label" aria-invalid="false"
+                                                                value="1">
+                                                            <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                                <div role="button" class="Polaris-TextField__Segment"
+                                                                    tabindex="-1">
+                                                                    <div class="Polaris-TextField__SpinnerIcon">
+                                                                        <span class="Polaris-Icon">
+                                                                            <span
+                                                                                class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                                                                            </span>
+                                                                            <svg viewBox="0 0 20 20"
+                                                                                class="Polaris-Icon__Svg"
+                                                                                focusable="false" aria-hidden="true">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M6.24 11.8a.75.75 0 0 0 1.06-.04l2.7-2.908 2.7 2.908a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0l-3.25 3.5a.75.75 0 0 0 .04 1.06Z">
+                                                                                </path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div role="button" class="Polaris-TextField__Segment"
+                                                                    tabindex="-1">
+                                                                    <div class="Polaris-TextField__SpinnerIcon">
+                                                                        <span class="Polaris-Icon">
+                                                                            <span
+                                                                                class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                                                                            </span>
+                                                                            <svg viewBox="0 0 20 20"
+                                                                                class="Polaris-Icon__Svg"
+                                                                                focusable="false" aria-hidden="true">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M6.24 8.2a.75.75 0 0 1 1.06.04l2.7 2.908 2.7-2.908a.75.75 0 1 1 1.1 1.02l-3.25 3.5a.75.75 0 0 1-1.1 0l-3.25-3.5a.75.75 0 0 1 .04-1.06Z">
+                                                                                </path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="Polaris-TextField__Backdrop">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id=":R1n6:Label" for=":R1n6:"
+                                                            class="Polaris-Label__Text">Cost</label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div
+                                                        class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input id="productCost" autocomplete="off"
+                                                                class="Polaris-TextField__Input" type="number"
+                                                                aria-labelledby=":R1n6:Label" aria-invalid="false"
+                                                                value="1">
+                                                            <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                                <div role="button" class="Polaris-TextField__Segment"
+                                                                    tabindex="-1">
+                                                                    <div class="Polaris-TextField__SpinnerIcon">
+                                                                        <span class="Polaris-Icon">
+                                                                            <span
+                                                                                class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                                                                            </span>
+                                                                            <svg viewBox="0 0 20 20"
+                                                                                class="Polaris-Icon__Svg"
+                                                                                focusable="false" aria-hidden="true">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M6.24 11.8a.75.75 0 0 0 1.06-.04l2.7-2.908 2.7 2.908a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0l-3.25 3.5a.75.75 0 0 0 .04 1.06Z">
+                                                                                </path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div role="button" class="Polaris-TextField__Segment"
+                                                                    tabindex="-1">
+                                                                    <div class="Polaris-TextField__SpinnerIcon">
+                                                                        <span class="Polaris-Icon">
+                                                                            <span
+                                                                                class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                                                                            </span>
+                                                                            <svg viewBox="0 0 20 20"
+                                                                                class="Polaris-Icon__Svg"
+                                                                                focusable="false" aria-hidden="true">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M6.24 8.2a.75.75 0 0 1 1.06.04l2.7 2.908 2.7-2.908a.75.75 0 1 1 1.1 1.02l-3.25 3.5a.75.75 0 0 1-1.1 0l-3.25-3.5a.75.75 0 0 1 .04-1.06Z">
+                                                                                </path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="Polaris-TextField__Backdrop">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+
+                            <div style="color:#bf0711">
+                                <button onclick="updateInventory()"
+                                    class="Polaris-Button Polaris-Button--outline Polaris-Button--monochrome"
+                                    type="button">
+                                    <span class="Polaris-Button__Content">
+                                        <span class="Polaris-Button__Text">Update</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div style="margin-top: 20px;">
+
+                            <div style="color:#bf0711">
+                                <button onclick="openRP()"
+                                    class="Polaris-Button Polaris-Button--outline Polaris-Button--monochrome"
+                                    type="button">
+                                    <span class="Polaris-Button__Content">
+                                        <span class="Polaris-Button__Text">Select Another Product</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+{% endblock main_content %}

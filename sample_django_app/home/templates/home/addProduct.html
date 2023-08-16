@@ -1,0 +1,172 @@
+{% extends 'home/utils/base.html' %}
+
+{% block title %}
+<ui-title-bar title="Add Product">
+
+</ui-title-bar>
+{% endblock title %}
+
+{% block extra_script %}
+<script>
+
+    function addProduct() {
+        
+        let productName = document.getElementById('productName')
+        let productPrice = document.getElementById('productPrice')
+        let productQuantity = document.getElementById('productQuantity')
+        let productImage = document.getElementById('productImage')
+        let productDescription = document.getElementById('productDescription')
+
+        var formData = new FormData()
+
+        formData.append('productName', productName.value)
+        formData.append('productPrice', productPrice.value)
+        formData.append('productQuantity', productQuantity.value)
+        formData.append('productImage', productImage.files[0])
+        formData.append('productDescription', productDescription.value)
+
+
+        try {
+            shopify.loading(true);
+            shopifyAuthenticatedFetch("/api/addProduct/", {
+                method: "post",
+                body: formData
+            }).then(async (res) => {
+                let receivedData = await res.json()
+                if (receivedData.status) {
+                    productName.value = "";
+                    productQuantity.value = "";
+                    productPrice.value = "";
+                    productImage.value = "";
+                    productDescription.value = "";
+                }
+                shopify.loading(false);
+
+            });
+        } catch (error) {
+            console.log("Error : ", error);
+            shopify.loading(false);
+        }
+        
+    }
+</script>
+{% endblock extra_script %}
+
+
+{% block main_content %}
+
+<div style="margin: 10%; padding: 10px;">
+
+
+
+    <div class="Polaris-FormLayout">
+        <div class="Polaris-FormLayout__Item">
+            <div class="">
+                <div class="Polaris-Labelled__LabelWrapper">
+                    <div class="Polaris-Label">
+                        <label for="productName" class="Polaris-Label__Text">Product Name</label>
+                    </div>
+                </div>
+                <div class="Polaris-Connected">
+                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                        <div class="Polaris-TextField">
+                            <input id="productName" class="Polaris-TextField__Input" type="text" value="" required>
+                            <div class="Polaris-TextField__Backdrop">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="Polaris-FormLayout__Item">
+            <div class="">
+                <div class="Polaris-Labelled__LabelWrapper">
+                    <div class="Polaris-Label">
+                        <label for="productPrice" class="Polaris-Label__Text">Price</label>
+                    </div>
+                </div>
+                <div class="Polaris-Connected">
+                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                        <div class="Polaris-TextField">
+                            <input id="productPrice" class="Polaris-TextField__Input" type="text" value="" required>
+                            <div class="Polaris-TextField__Backdrop">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="Polaris-FormLayout__Item">
+            <div class="">
+                <div class="Polaris-Labelled__LabelWrapper">
+                    <div class="Polaris-Label">
+                        <label for="productQuantity" class="Polaris-Label__Text">Quantity</label>
+                    </div>
+                </div>
+                <div class="Polaris-Connected">
+                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                        <div class="Polaris-TextField">
+                            <input id="productQuantity" class="Polaris-TextField__Input" type="number" value=""
+                                required>
+                            <div class="Polaris-TextField__Backdrop">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="Polaris-FormLayout__Item">
+            <div class="">
+                <div class="Polaris-Labelled__LabelWrapper">
+                    <div class="Polaris-Label">
+                        <label for="productImage" class="Polaris-Label__Text">Image</label>
+                    </div>
+                </div>
+                <div class="Polaris-Connected">
+                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                        <div class="Polaris-TextField">
+                            <input id="productImage" class="Polaris-TextField__Input" type="file"
+                                accept="image/png, image/jpeg" value="" required>
+                            <div class="Polaris-TextField__Backdrop">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="Polaris-FormLayout__Item">
+            <div class="">
+                <div class="Polaris-Labelled__LabelWrapper">
+                    <div class="Polaris-Label">
+                        <label for="productDescription" class="Polaris-Label__Text">Description</label>
+                    </div>
+                </div>
+                <div class="Polaris-Connected">
+                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                        <div class="Polaris-TextField">
+                            <textarea id="productDescription" class="Polaris-TextField__Input" value=""
+                                required></textarea>
+                            <div class="Polaris-TextField__Backdrop">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="Polaris-Button Polaris-Button--outline" style="margin-top: 20px;" type="button"
+        onclick="addProduct()">
+        <span class="Polaris-Button__Content">
+            <span class="Polaris-Button__Text">Add product</span>
+        </span>
+    </button>
+
+
+
+</div>
+
+{% endblock main_content %}

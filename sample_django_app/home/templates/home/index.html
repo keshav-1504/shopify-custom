@@ -1,0 +1,226 @@
+{% extends 'home/utils/base.html' %}
+
+{% block title %}
+<ui-title-bar title="Home-API">
+
+</ui-title-bar>
+{% endblock title %}
+
+{% block extra_script %}
+<script>
+
+  let table_root = document.querySelector('#table-root');
+  let loading_indicator = document.querySelector('#loading-indicator');
+  function getProducts() {
+    console.log("gettting...")
+    loading_indicator.style.display = ""
+    try {
+      shopify.loading(true);
+      shopifyAuthenticatedFetch('/api/products').then(async (res) => {
+
+        var products = (await res.json())['products'];
+        shopify.loading(false);
+        console.log("Products: ", products)
+        var table_body = window.document.querySelector('#table-body');
+        table_body.innerHTML = "";
+
+        for (var i = 0, len = products.length; i < len; i++) {
+          var newLi = `
+          <tr class="Polaris-DataTable__TableRow Polaris-DataTable--hoverable">
+                      <th class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--firstColumn" scope="row">${i + 1}</th>
+
+                      <th class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--firstColumn" scope="row">${products[i]['title']}</th>
+                      
+                      <td class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--numeric">${products[i]['variants'][0]['price']}</td>
+
+                      <td class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--numeric">${products[i]['variants'][0]['inventory_quantity']}</td>
+          </tr>
+          `
+          // newLi.textContent = products[i]['title']
+          table_body.innerHTML += newLi;
+        }
+        table_root.style.display = "";
+        loading_indicator.style.display = 'none';
+      })
+
+    } catch (error) {
+      console.log("Error : ", error)
+    }
+
+  }
+
+</script>
+{% endblock extra_script %}
+
+{% block main_content %}
+
+<div class="Polaris-Box" style=" margin: 30px;">
+  <div style="height:auto;width:auto;border-radius:inherit">
+    <div style="display: flex;">
+
+      <div style="color:var(--p-color-text)">
+        <h2 class="Polaris-Text--root Polaris-Text--heading3xl">Get Product Data using API</h2>
+      </div>
+
+      <div style="color:#a75f01;margin-left: 20px;">
+        <button onclick="getProducts()" class="Polaris-Button Polaris-Button--outline Polaris-Button--monochrome"
+          type="button">
+          <span class="Polaris-Button__Content">
+            <span class="Polaris-Button__Text">Get Product Details</span>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="Polaris-Page" id="table-root" style="display: none;">
+      <div class="Polaris-Box"
+        style="--pc-box-padding-block-end-xs:var(--p-space-4);--pc-box-padding-block-end-md:var(--p-space-5);--pc-box-padding-block-start-xs:var(--p-space-4);--pc-box-padding-block-start-md:var(--p-space-5);--pc-box-padding-inline-start-xs:var(--p-space-4);--pc-box-padding-inline-start-sm:var(--p-space-0);--pc-box-padding-inline-end-xs:var(--p-space-4);--pc-box-padding-inline-end-sm:var(--p-space-0);position:relative">
+        <div
+          class="Polaris-Page-Header--isSingleRow Polaris-Page-Header--noBreadcrumbs Polaris-Page-Header--mediumTitle">
+
+        </div>
+      </div>
+      <div class="">
+        <div class="Polaris-LegacyCard">
+          <div class="">
+            <div class="Polaris-DataTable__Navigation">
+              <button class="Polaris-Button Polaris-Button--disabled Polaris-Button--plain Polaris-Button--iconOnly"
+                aria-label="Scroll table left one column" aria-disabled="true" type="button" tabindex="-1">
+                <span class="Polaris-Button__Content">
+                  <span class="Polaris-Button__Icon">
+                    <span class="Polaris-Icon">
+                      <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                      </span>
+                      <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                          d="M11.78 5.47a.75.75 0 0 1 0 1.06l-3.47 3.47 3.47 3.47a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 0-1.06l4-4a.75.75 0 0 1 1.06 0Z">
+                        </path>
+                      </svg>
+                    </span>
+                  </span>
+                </span>
+              </button>
+              <button class="Polaris-Button Polaris-Button--plain Polaris-Button--iconOnly"
+                aria-label="Scroll table right one column" type="button">
+                <span class="Polaris-Button__Content">
+                  <span class="Polaris-Button__Icon">
+                    <span class="Polaris-Icon">
+                      <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                      </span>
+                      <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                          d="M7.72 14.53a.75.75 0 0 1 0-1.06l3.47-3.47-3.47-3.47a.75.75 0 0 1 1.06-1.06l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0Z">
+                        </path>
+                      </svg>
+                    </span>
+                  </span>
+                </span>
+              </button>
+            </div>
+            <div class="Polaris-DataTable Polaris-DataTable__ShowTotals">
+              <div class="Polaris-DataTable__ScrollContainer">
+                <table class="Polaris-DataTable__Table">
+                  <thead>
+                    <tr>
+                      <th data-polaris-header-cell="true"
+                        class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--header"
+                        scope="col">Sr No.</th>
+                      <th data-polaris-header-cell="true"
+                        class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--header"
+                        scope="col">Product</th>
+                      <th data-polaris-header-cell="true"
+                        class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--header Polaris-DataTable__Cell--numeric"
+                        scope="col">Price</th>
+                      <th data-polaris-header-cell="true"
+                        class="Polaris-DataTable__Cell Polaris-DataTable__Cell--verticalAlignTop Polaris-DataTable__Cell--header Polaris-DataTable__Cell--numeric"
+                        scope="col">Net quantity</th>
+
+                    </tr>
+
+                  </thead>
+                  <tbody id="table-body">
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="Polaris-VerticalStack" id="loading-indicator"
+      style="--pc-vertical-stack-inline-align:center;--pc-vertical-stack-order:column;--pc-vertical-stack-gap-xs:var(--p-space-4);display: none;">
+      <div class="Polaris-Box"
+        style="--pc-box-max-width:var(--pc-skeleton-page-max-width);--pc-box-padding-block-end-xs:var(--p-space-0);--pc-box-padding-block-start-xs:var(--p-space-0);--pc-box-padding-inline-start-sm:var(--p-space-6);--pc-box-padding-inline-end-sm:var(--p-space-6);--pc-box-width:100%"
+        role="status" aria-label="Page loading">
+        <div class="Polaris-VerticalStack" style="--pc-vertical-stack-order:column">
+          <div class="Polaris-Box"
+            style="--pc-box-padding-block-end-xs:var(--p-space-4);--pc-box-padding-block-end-md:var(--p-space-5);--pc-box-padding-block-start-xs:var(--p-space-4);--pc-box-padding-block-start-md:var(--p-space-5);--pc-box-padding-inline-start-xs:var(--p-space-4);--pc-box-padding-inline-start-sm:var(--p-space-0);--pc-box-padding-inline-end-xs:var(--p-space-4);--pc-box-padding-inline-end-sm:var(--p-space-0);--pc-box-width:100%">
+            <div class="Polaris-HorizontalStack"
+              style="--pc-horizontal-stack-align:space-between;--pc-horizontal-stack-block-align:center;--pc-horizontal-stack-wrap:wrap;--pc-horizontal-stack-gap-xs:var(--p-space-4)">
+              <div class="Polaris-HorizontalStack"
+                style="--pc-horizontal-stack-wrap:wrap;--pc-horizontal-stack-gap-xs:var(--p-space-4)">
+                <div class="Polaris-Box"
+                  style="--pc-box-padding-block-end-xs:var(--p-space-1);--pc-box-padding-block-start-xs:var(--p-space-1)">
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="Polaris-Box" style="--pc-box-padding-block-end-xs:var(--p-space-2);--pc-box-width:100%">
+            <div class="Polaris-Layout">
+              <div class="Polaris-Layout__Section">
+
+                <div class="Polaris-LegacyCard">
+                  <div class="Polaris-LegacyCard__Section">
+                    <div class="Polaris-TextContainer">
+                      <div class="Polaris-SkeletonDisplayText__DisplayText Polaris-SkeletonDisplayText--sizeLarge">
+                      </div>
+                      <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                      </div>
+                      <div class="Polaris-SkeletonBodyText__SkeletonBodyTextContainer">
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                        <div class="Polaris-SkeletonBodyText">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+  </div>
+
+</div>
+
+
+
+{% endblock main_content %}

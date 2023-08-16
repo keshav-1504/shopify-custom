@@ -1,0 +1,78 @@
+{% extends 'home/utils/base.html' %} {% block title %}
+<ui-title-bar title="Order Fullfillment"> </ui-title-bar>
+{% endblock title %} {% block extra_script %}
+<script>
+  let orderIdDOM = document.getElementById("order-id");
+
+  function updateMetaField() {
+
+    var formData = new FormData();
+
+    formData.append("orderId", orderIdDOM.value);
+
+    try {
+      shopify.loading(true);
+      console.log('"Making request..."');
+      shopify.toast.show("Request sent for order Fullfillment");
+      shopifyAuthenticatedFetch("/api/orderFulfillment/", {
+        method: "post",
+        body: formData,
+      }).then(async (res) => {
+        let receivedData = await res.json();
+        console.log("MSG: ", receivedData.msg);
+        console.log("Status: ", receivedData.status);
+        shopify.loading(false);
+      });
+    } catch (error) {
+      console.log("Error : ", error);
+      shopify.loading(false);
+    }
+  }
+</script>
+{% endblock extra_script %} {% block main_content %}
+
+<div style="margin: 10%; padding: 10px">
+  <div
+    style="display: flex; align-items: center; justify-content: center"
+    id="initialProductSelectionButton"
+  >
+    <div class="">
+      <div class="Polaris-Labelled__LabelWrapper">
+        <div class="Polaris-Label">
+          <label id=":R1n6:Label" for=":R1n6:" class="Polaris-Label__Text"
+            >Order ID</label
+          >
+        </div>
+      </div>
+      <div class="Polaris-Connected">
+        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+          <div class="Polaris-TextField Polaris-TextField--hasValue">
+            <input
+              id="order-id"
+              class="Polaris-TextField__Input"
+              type="text"
+              aria-describedby=":R1n6:HelpText"
+              aria-labelledby=":R1n6:Label"
+              aria-invalid="false"
+            />
+            <div class="Polaris-TextField__Backdrop"></div>
+          </div>
+        </div>
+      </div>
+      <div class="Polaris-Labelled__HelpText" id=":R1n6:HelpText">
+        <span
+          class="Polaris-Text--root Polaris-Text--break Polaris-Text--subdued"
+          >We’ll use this order ID to update its Fullfillment Status.</span
+        >
+      </div>
+    </div>
+
+    <button onclick="updateMetaField()" class="Polaris-Button" type="button">
+      <span class="Polaris-Button__Content">
+        <span class="Polaris-Button__Text">Submit</span>
+      </span>
+    </button>
+  </div>
+</div>
+
+{% endblock main_content %}

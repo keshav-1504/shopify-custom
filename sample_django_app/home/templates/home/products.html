@@ -1,0 +1,94 @@
+{% extends 'home/utils/base.html' %} 
+
+{% block title %}
+<ui-title-bar title="Products"> </ui-title-bar>
+{% endblock title %} 
+
+{% block extra_script %}
+{% endblock extra_script %}
+
+
+{% block main_content %}
+<div class="container text-center m-3">
+  <div class="row">
+    {% for product in products %}
+
+    <div class="Polaris-LegacyCard" style="margin: 70px; background-color: #ccdee703;">
+      <div class="Polaris-MediaCard" style="padding-left: 70px; padding-right: 70px; ">
+        <div class="Polaris-MediaCard__MediaContainer">
+          {% for image in product.images %} {% if forloop.first %}
+          <img alt="" width="300px" height="300px"
+            style="object-fit: cover; object-position: center; padding: 20px;mix-blend-mode: multiply;
+            " src="{{image.src}}" />
+
+          {% endif %} {% endfor %}
+        </div>
+        <div class="Polaris-MediaCard__InfoContainer">
+          <div class="Polaris-LegacyCard__Section">
+            <div class="Polaris-Box" style="
+                position: absolute;
+                --pc-box-inset-block-start: var(--p-space-4);
+                --pc-box-inset-inline-end: var(--p-space-5);
+                z-index: var(--p-z-index-2);
+              ">
+              <div class="Polaris-HorizontalStack" style="
+                  --pc-horizontal-stack-wrap: wrap;
+                  --pc-horizontal-stack-gap-xs: var(--p-space-1);
+                ">
+                
+              </div>
+            </div>
+            <div class="Polaris-LegacyStack Polaris-LegacyStack--vertical Polaris-LegacyStack--spacingTight">
+              <div class="Polaris-LegacyStack__Item">
+                <div class="Polaris-MediaCard__Heading">
+                  <h2 class="Polaris-Text--root Polaris-Text--headingMd">
+                    {{product.title}}
+                  </h2>
+                </div>
+              </div>
+              <div class="Polaris-LegacyStack__Item">
+                <p class="Polaris-MediaCard__Description">
+                  {{product.body_html|truncatechars:300}}
+                </p>
+              </div>
+              <div class="Polaris-LegacyStack__Item">
+                <div class="Polaris-MediaCard__ActionContainer">
+                  <div class="Polaris-ButtonGroup" >
+                    <div class="Polaris-ButtonGroup__Item" style="display: flex;">
+                      {% for variant in product.variants %} {% if forloop.first %}
+
+                      <div class="Polaris-MediaCard__PrimaryAction">
+                        
+                          <span class="Polaris-Button__Content">
+                         
+                            <span class="Polaris-Button__Text">Amount:   <b>₹ {{variant.price}}</b> </span>
+                          
+                          </span>
+                        
+                      </div>
+                      <div class="Polaris-MediaCard__PrimaryAction">
+                        
+                          <span class="Polaris-Button__Content">
+                         
+                            <span class="Polaris-Button__Text">Quantity: <b>{{variant.inventory_quantity}}</b> </span>
+                          
+                          </span>
+                        
+                      </div>
+
+                      {% endif %} {% endfor %}
+                     
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
+</div>
+{% endblock main_content %}

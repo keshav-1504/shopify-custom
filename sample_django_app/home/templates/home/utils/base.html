@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Django-App</title>
+  <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js?apiKey={{api_key}}"></script>
+  <script src="https://unpkg.com/@shopify/app-bridge"></script>
+  <script src="https://unpkg.com/@shopify/app-bridge-utils"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shopify/polaris@11.11.0/build/esm/styles.css" />
+
+
+  <ui-nav-menu>
+    <a href="/">Home -API</a>
+    <a href="/test/products">Product</a>
+    <a href="/test/addProduct">Add Product</a>
+    <a href="/test/updateInventory">Update Inventory</a>
+    <a href="/test/addProductMetafield">Add Product Metafield</a>
+    <a href="/test/addOrderMetafield">Add Order Metafield</a>
+    <a href="/test/createOrder">Place Order</a>
+    <a href="/test/orderFulfillment">Order Fulfillment</a>
+  </ui-nav-menu>
+
+
+
+  {% block title %}{% endblock title %}
+  <script>
+    var AppBridge = window["app-bridge"];
+    var AppBridgeUtils = window["app-bridge-utils"];
+    var actions = AppBridge.actions;
+    var createApp = AppBridge.default;
+    var TitleBar = actions.TitleBar;
+    var app = createApp({
+      apiKey: "{{ api_key }}",
+      shopOrigin: "{{ shop_origin }}",
+    });
+
+    var shopifyAuthenticatedFetch = AppBridgeUtils.authenticatedFetch(app);
+    var redirect = actions.Redirect.create(app);
+  </script>
+
+
+</head>
+
+<body style=" height:auto;width:auto;border-radius:inherit">
+
+  {% block main_content %}
+  {% endblock main_content %}
+
+  
+
+  {% block extra_script %}
+  {% endblock extra_script %}
+
+
+
+  <!-- Modal to indicate login is needed -->
+  {% if scope_changes_required %}
+  {% include "utils/scope_change.html" %}
+  {% endif %}
+
+</body>
