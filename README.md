@@ -1,4 +1,4 @@
-# Sample Django App
+# Sample Django App - No longer maintained
 
 A demo app created using Django and ShopifyAPI `v8.4+`.
 
